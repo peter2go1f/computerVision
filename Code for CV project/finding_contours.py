@@ -32,7 +32,7 @@ def find_ball(mask):
 
 if __name__ == "__main__":
 
-    img_original = cv2.imread('putting.jpg')
+    img_original = cv2.imread('images/putting.jpg')
     blur = cv2.GaussianBlur(img_original, (9,9), 0)
     gray = cv2.cvtColor(img_original, cv2.COLOR_BGR2GRAY)          # turn it gray
     # edges = cv2.Canny(gray, 100, 200)                       # get canny edges
