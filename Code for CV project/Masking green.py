@@ -96,11 +96,26 @@ if __name__ == "__main__":
 
         # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
         kernel = np.ones((3,3), np.uint8)
-        closing_mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+        closing_mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel, iterations=5)
+        # do some erosion after this to get rid of random white spots
+
 
         # mask_inverted = cv2.bitwise_not(mask)
-        cv2.imshow('frame', closing_mask)  # Display the grayscale frame on the screen
+        cv2.imshow('closing mask', closing_mask)  # Display the grayscale frame on the screen
         # This shows a black/white mask of the golf ball and any other objects that are within the white-grey colour range
+
+
+        # Define regions of interest (for demonstration purposes, let's assume predefined ROIs)
+        rois = [(200, 630, 100, 100)]  # Format: (start_x, start_y, width, height)
+
+        # Draw bounding boxes
+        for roi in rois:
+            start_x, start_y, width, height = roi
+            end_x = start_x + width
+            end_y = start_y + height
+            cv2.rectangle(frame, (start_x, start_y), (end_x, end_y), (0, 0, 255), 2)  # Green color, thickness=2
+
+        cv2.imshow('frame', frame)   # show original img with bounding box
 
         # Now we want to identify round objects, which should be the golf ball
         # center, radius = find_ball(mask, lower, upper)  # uses max of contours
