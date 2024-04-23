@@ -1,6 +1,8 @@
 from __future__ import print_function
 import cv2 as cv
 import argparse
+import numpy as np
+
 max_value = 255
 max_value_H = 360//2
 low_H = 0
@@ -67,15 +69,49 @@ cv.createTrackbar(low_V_name, window_detection_name , low_V, max_value, on_low_V
 cv.createTrackbar(high_V_name, window_detection_name , high_V, max_value, on_high_V_thresh_trackbar)
 
 while True:
-    cap = cv.VideoCapture('videos/peter_putting_second2.mp4')
+    cap = cv.VideoCapture('videos/peter_putting_third.mp4')
     ret, frame = cap.read()  # Read a frame from the video file.
     # frame = cv.imread('putting_face_on.png')
     if frame is None:
         break
-
+    
     frame_HSV = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
-    frame_threshold = cv.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
-            
+
+    # green_mask test
+    lower_grass = np.array([20, 100, 30], dtype="uint8")  
+    upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
+    # Mask the frame using bitwise_and() operation with green grass so we only focus on the area with grass
+    green_mask = cv.inRange(frame_HSV, lower_grass, upper_grass)
+    # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
+    kernel = np.ones((3,3), np.uint8)
+    closing_mask = cv.morphologyEx(green_mask, cv.MORPH_CLOSE, kernel, iterations=5)
+    # do some erosion after this to get rid of random white spots
+    # erosion_mask = cv2.erode(closing_mask, kernel, iterations=2)
+    opening_mask = cv.morphologyEx(closing_mask, cv.MORPH_OPEN, kernel, iterations=2)
+    # Find contours in the binary image
+    contours, _ = cv.findContours(opening_mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contour = max(contours, key=len)
+    # Approximate the contour with a polygon
+    epsilon = 0.03 * cv.arcLength(contour, True) # adjust the epsilon value as needed
+    approx = cv.approxPolyDP(contour, epsilon, True)
+    # Draw the polygon (optional)
+    # cv2.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
+    # Get corner points
+    # corners = np.squeeze(approx)
+    # Draw circles at corner points (optional)
+    # for corner in corners:
+    #     cv2.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
+    # Create a black mask with the same dimensions as the image
+    black_mask = np.zeros(frame_HSV.shape[:2], dtype="uint8")   # this black_mask works
+    # Draw the polygon on the mask
+    cv.fillPoly(black_mask, [approx], 255)
+    # Apply the mask to the original image
+    masked_image = cv.bitwise_and(frame_HSV, frame_HSV, mask=black_mask)
+
+
+    
+    # frame_threshold = cv.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
+    frame_threshold = cv.inRange(masked_image, (low_H, low_S, low_V), (high_H, high_S, high_V))       
             
     cv.imshow(window_capture_name, frame_HSV)
     cv.imshow(window_detection_name, frame_threshold)

@@ -75,7 +75,7 @@ if __name__ == "__main__":
     # track_ball()
     
 
-    cap = cv2.VideoCapture('videos/peter_putting_second2.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_third.mp4')
     # grab the current frame
     ret, frame = cap.read()  # Read a frame from the video file.
     # if not ret:
@@ -88,11 +88,13 @@ if __name__ == "__main__":
     # img_original = cv2.imread('putting.jpg')
     frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)   # convert image from BGR to HSV
     # Define the upper and lower HSV colour thresholds for the green (grass) colour.
-    lower = np.array([50, 120, 70], dtype="uint8")  
-    upper = np.array([110, 255, 255], dtype="uint8") 
+    # lower_grass = np.array([50, 120, 70], dtype="uint8")  
+    # upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
+    lower_grass = np.array([20, 100, 30], dtype="uint8")  
+    upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
 
     # Detect a colour ball with a colour range.
-    mask = cv2.inRange(frame_HSV, lower, upper)  # Find all pixels in the image within the colour range.
+    mask = cv2.inRange(frame_HSV, lower_grass, upper_grass)  # Find all pixels in the image within the colour range.
 
     # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
     kernel = np.ones((3,3), np.uint8)
@@ -121,22 +123,24 @@ if __name__ == "__main__":
 
     # Find contours in the binary image
     contours, _ = cv2.findContours(opening_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contour = max(contours, key=len)
 
     # Iterate through each contour
-    for contour in contours:
-        # Approximate the contour with a polygon
-        epsilon = 0.03 * cv2.arcLength(contour, True) # adjust the epsilon value as needed
-        approx = cv2.approxPolyDP(contour, epsilon, True)
-        
-        # Draw the polygon (optional)
-        cv2.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
-        
-        # Get corner points
-        corners = np.squeeze(approx)
-        
-        # Draw circles at corner points (optional)
-        for corner in corners:
-            cv2.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
+    # for contour in contours:
+
+    # Approximate the contour with a polygon
+    epsilon = 0.03 * cv2.arcLength(contour, True) # adjust the epsilon value as needed
+    approx = cv2.approxPolyDP(contour, epsilon, True)
+
+    # Draw the polygon (optional)
+    cv2.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
+
+    # Get corner points
+    corners = np.squeeze(approx)
+
+    # Draw circles at corner points (optional)
+    for corner in corners:
+        cv2.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
 
     
     # Create a black mask with the same dimensions as the image
@@ -153,6 +157,7 @@ if __name__ == "__main__":
 
     while cv2.waitKey(1) < 0:
         # Display the image with contours and corner points
+        cv2.imshow('opening_mask', opening_mask)
         cv2.imshow('Contours and Corner Points', frame)
         cv2.imshow('masked_image', masked_image)
 
