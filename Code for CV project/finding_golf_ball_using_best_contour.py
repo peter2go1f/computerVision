@@ -8,8 +8,8 @@ def find_ball(frame_HSV, lower_ball, upper_ball):
 
     # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
     kernel = np.ones((3,3), np.uint8)
-    opening_mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
-    closing_mask = cv2.morphologyEx(opening_mask, cv2.MORPH_CLOSE, kernel, iterations=1)
+    opening_mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=3)
+    closing_mask = cv2.morphologyEx(opening_mask, cv2.MORPH_CLOSE, kernel, iterations=0)
     
     cv2.imshow('closing_mask', closing_mask)
     cv2.imshow('opening_mask', opening_mask)
@@ -51,21 +51,25 @@ def find_ball(frame_HSV, lower_ball, upper_ball):
     
 
 def track_ball():
-    cap = cv2.VideoCapture('videos/peter_putting_third.mp4')
-
-    # Define the upper and lower colour thresholds for the ball colour.
-    # lower_ball = np.array([70, 0, 95], dtype="uint8")  
-    # upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
-    lower_ball = np.array([43, 0, 92], dtype="uint8")        
-    upper_ball = np.array([62, 76, 255], dtype="uint8")     # peter_putting_third
+    cap = cv2.VideoCapture('videos/peter_putting_fourth.mp4')
 
     # Define the upper and lower HSV colour thresholds for the green (grass) colour.
     # lower_grass = np.array([50, 120, 70], dtype="uint8")  
     # upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
-    lower_grass = np.array([20, 100, 30], dtype="uint8")  
-    upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
+    # lower_grass = np.array([20, 100, 30], dtype="uint8")  
+    # upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
+    lower_grass = np.array([33, 54, 21], dtype="uint8")  
+    upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
 
-    while cv2.waitKey(100) < 0:   # the number determines how fast the video plays
+    # Define the upper and lower colour thresholds for the ball colour.
+    # lower_ball = np.array([70, 0, 95], dtype="uint8")  
+    # upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
+    # lower_ball = np.array([43, 0, 92], dtype="uint8")        
+    # upper_ball = np.array([62, 76, 255], dtype="uint8")     # peter_putting_third
+    lower_ball = np.array([75, 0, 117], dtype="uint8")  
+    upper_ball = np.array([160, 114, 255], dtype="uint8")      # peter_putting_fourth
+
+    while cv2.waitKey(150) < 0:   # the number determines how fast the video plays
     # while cv2.waitKey(0):
         # grab the current frame
         ret, frame = cap.read()  # Read a frame from the video file.

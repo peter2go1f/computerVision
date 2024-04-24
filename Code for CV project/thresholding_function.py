@@ -69,7 +69,7 @@ cv.createTrackbar(low_V_name, window_detection_name , low_V, max_value, on_low_V
 cv.createTrackbar(high_V_name, window_detection_name , high_V, max_value, on_high_V_thresh_trackbar)
 
 while True:
-    cap = cv.VideoCapture('videos/peter_putting_third.mp4')
+    cap = cv.VideoCapture('videos/peter_putting_fourth.mp4')
     ret, frame = cap.read()  # Read a frame from the video file.
     # frame = cv.imread('putting_face_on.png')
     if frame is None:
@@ -77,9 +77,11 @@ while True:
     
     frame_HSV = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
-    # green_mask test
-    lower_grass = np.array([20, 100, 30], dtype="uint8")  
-    upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
+    # green_masking to then test threshold for golf ball only
+    # lower_grass = np.array([20, 100, 30], dtype="uint8")  
+    # upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
+    lower_grass = np.array([33, 54, 21], dtype="uint8")  
+    upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
     # Mask the frame using bitwise_and() operation with green grass so we only focus on the area with grass
     green_mask = cv.inRange(frame_HSV, lower_grass, upper_grass)
     # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
@@ -95,12 +97,12 @@ while True:
     epsilon = 0.03 * cv.arcLength(contour, True) # adjust the epsilon value as needed
     approx = cv.approxPolyDP(contour, epsilon, True)
     # Draw the polygon (optional)
-    # cv2.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
+    cv.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
     # Get corner points
-    # corners = np.squeeze(approx)
+    corners = np.squeeze(approx)
     # Draw circles at corner points (optional)
-    # for corner in corners:
-    #     cv2.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
+    for corner in corners:
+        cv.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
     # Create a black mask with the same dimensions as the image
     black_mask = np.zeros(frame_HSV.shape[:2], dtype="uint8")   # this black_mask works
     # Draw the polygon on the mask
@@ -109,8 +111,9 @@ while True:
     masked_image = cv.bitwise_and(frame_HSV, frame_HSV, mask=black_mask)
 
 
-    
+    # thresholding for the green grass
     # frame_threshold = cv.inRange(frame_HSV, (low_H, low_S, low_V), (high_H, high_S, high_V))
+    # thresholding for white ball after green_mask
     frame_threshold = cv.inRange(masked_image, (low_H, low_S, low_V), (high_H, high_S, high_V))       
             
     cv.imshow(window_capture_name, frame_HSV)
