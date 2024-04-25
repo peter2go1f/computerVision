@@ -7,7 +7,7 @@ if __name__ == "__main__":
     
 
     # cap = cv2.VideoCapture('videos/peter_putting_third.mp4')
-    cap = cv2.VideoCapture('videos/peter_putting_fourth.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_fourth60fps.mp4')
     # grab the current frame
     ret, frame = cap.read()  # Read a frame from the video file.
     if not ret:
@@ -24,8 +24,10 @@ if __name__ == "__main__":
     # upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
     # lower_grass = np.array([20, 100, 30], dtype="uint8")  
     # upper_grass = np.array([90, 255, 220], dtype="uint8")    # peter_putting_third
-    lower_grass = np.array([33, 54, 21], dtype="uint8")  
-    upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
+    # lower_grass = np.array([33, 54, 21], dtype="uint8")  
+    # upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
+    lower_grass = np.array([30, 68, 75], dtype="uint8")  
+    upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
 
     # Detect a colour ball with a colour range.
     mask = cv2.inRange(frame_HSV, lower_grass, upper_grass)  # Find all pixels in the image within the colour range.
@@ -63,7 +65,7 @@ if __name__ == "__main__":
     # for contour in contours:
 
     # Approximate the contour with a polygon
-    epsilon = 0.03 * cv2.arcLength(contour, True) # adjust the epsilon value as needed
+    epsilon = 0.001 * cv2.arcLength(contour, True) # adjust the epsilon value as needed
     approx = cv2.approxPolyDP(contour, epsilon, True)
 
     # Draw the polygon (optional)

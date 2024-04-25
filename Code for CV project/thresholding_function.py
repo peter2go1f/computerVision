@@ -69,7 +69,7 @@ cv.createTrackbar(low_V_name, window_detection_name , low_V, max_value, on_low_V
 cv.createTrackbar(high_V_name, window_detection_name , high_V, max_value, on_high_V_thresh_trackbar)
 
 while True:
-    cap = cv.VideoCapture('videos/peter_putting_fourth.mp4')
+    cap = cv.VideoCapture('videos/peter_putting_fourth60fps.mp4')
     ret, frame = cap.read()  # Read a frame from the video file.
     # frame = cv.imread('putting_face_on.png')
     if frame is None:
@@ -80,8 +80,10 @@ while True:
     # green_masking to then test threshold for golf ball only
     # lower_grass = np.array([20, 100, 30], dtype="uint8")  
     # upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
-    lower_grass = np.array([33, 54, 21], dtype="uint8")  
-    upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
+    # lower_grass = np.array([33, 54, 21], dtype="uint8")  
+    # upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
+    lower_grass = np.array([30, 68, 75], dtype="uint8")  
+    upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
     # Mask the frame using bitwise_and() operation with green grass so we only focus on the area with grass
     green_mask = cv.inRange(frame_HSV, lower_grass, upper_grass)
     # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
