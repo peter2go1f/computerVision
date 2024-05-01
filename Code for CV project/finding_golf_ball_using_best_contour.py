@@ -18,13 +18,13 @@ def find_ball(frame_HSV, lower_ball, upper_ball, frame_num2, prevCenter):
     # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
     kernel = np.ones((3,3), np.uint8)
     opening_mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
-    closing_mask = cv2.morphologyEx(opening_mask, cv2.MORPH_CLOSE, kernel, iterations=2)
+    closing_mask = cv2.morphologyEx(opening_mask, cv2.MORPH_CLOSE, kernel, iterations=1)
     
-    cv2.imshow('closing_mask', closing_mask)
-    # cv2.imshow('opening_mask', opening_mask)
+    final_mask = closing_mask
+    cv2.imshow('final_mask', final_mask)
 
     # Find a series of points which outline the shape in the mask.
-    contours, _hierarchy = cv2.findContours(opening_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _hierarchy = cv2.findContours(final_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     if contours:
         # Filter and process contours
@@ -46,7 +46,7 @@ def find_ball(frame_HSV, lower_ball, upper_ball, frame_num2, prevCenter):
             if (i == 0):
                 best_circularity = circularity
                 bestCircle = contour
-            if (circularity > best_circularity) & (5 < radius < 9):   # will always skip when i==0 as circularity=best_circularity
+            if (circularity > best_circularity):   # will always skip when i==0 as circularity=best_circularity
                 best_circularity = circularity
                 bestCircle = contour
             i += 1          
@@ -68,14 +68,14 @@ def find_ball(frame_HSV, lower_ball, upper_ball, frame_num2, prevCenter):
                 return center, radius, frame_num2, prevCenter
             frame_num2 += 1
             return None, None, frame_num2, prevCenter
-        
+        print(prevCenter)
         # return center, radius, frame_num2
     else:
         return None, None, frame_num2, prevCenter
     
 
 def track_ball():
-    cap = cv2.VideoCapture('videos/peter_putting_fifth_closeup_4k.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_second2.mp4')
 
     # Circle tracking based on previous circle location
     prevCircle = None
@@ -103,24 +103,24 @@ def track_ball():
                          [0,0,0,100]], np.float32)  # Process Noise
 
     # Define the upper and lower HSV colour thresholds for the green (grass) colour.
-    # lower_grass = np.array([50, 120, 70], dtype="uint8")  
-    # upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
+    lower_grass = np.array([50, 120, 70], dtype="uint8")  
+    upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
     # lower_grass = np.array([20, 100, 30], dtype="uint8")  
     # upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
     # lower_grass = np.array([33, 54, 21], dtype="uint8")  
     # upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
-    lower_grass = np.array([30, 68, 75], dtype="uint8")  
-    upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
+    # lower_grass = np.array([30, 68, 75], dtype="uint8")  
+    # upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
 
     # Define the upper and lower colour thresholds for the ball colour.
-    # lower_ball = np.array([70, 0, 95], dtype="uint8")  
-    # upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
+    lower_ball = np.array([70, 0, 95], dtype="uint8")  
+    upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
     # lower_ball = np.array([43, 0, 92], dtype="uint8")        
     # upper_ball = np.array([62, 76, 255], dtype="uint8")     # peter_putting_third
     # lower_ball = np.array([75, 0, 117], dtype="uint8")  
     # upper_ball = np.array([160, 114, 255], dtype="uint8")      # peter_putting_fourth
-    lower_ball = np.array([50, 0, 183], dtype="uint8")  
-    upper_ball = np.array([105, 82, 255], dtype="uint8")      # peter_putting_fourth60fps
+    # lower_ball = np.array([50, 0, 183], dtype="uint8")  
+    # upper_ball = np.array([105, 82, 255], dtype="uint8")      # peter_putting_fourth60fps
 
     # argparse setup
     ap = argparse.ArgumentParser()
