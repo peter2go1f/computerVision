@@ -75,7 +75,7 @@ def find_ball(frame_HSV, lower_ball, upper_ball, frame_num2, prevCenter):
     
 
 def track_ball():
-    cap = cv2.VideoCapture('videos/peter_putting_second2.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_fifth_60fps.mp4')
 
     # Circle tracking based on previous circle location
     prevCircle = None
@@ -103,24 +103,24 @@ def track_ball():
                          [0,0,0,100]], np.float32)  # Process Noise
 
     # Define the upper and lower HSV colour thresholds for the green (grass) colour.
-    lower_grass = np.array([50, 120, 70], dtype="uint8")  
-    upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
+    # lower_grass = np.array([50, 120, 70], dtype="uint8")  
+    # upper_grass = np.array([110, 255, 255], dtype="uint8")   # peter_putting_second 
     # lower_grass = np.array([20, 100, 30], dtype="uint8")  
     # upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
     # lower_grass = np.array([33, 54, 21], dtype="uint8")  
     # upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
-    # lower_grass = np.array([30, 68, 75], dtype="uint8")  
-    # upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
+    lower_grass = np.array([30, 68, 75], dtype="uint8")  
+    upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
 
     # Define the upper and lower colour thresholds for the ball colour.
-    lower_ball = np.array([70, 0, 95], dtype="uint8")  
-    upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
+    # lower_ball = np.array([70, 0, 95], dtype="uint8")  
+    # upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
     # lower_ball = np.array([43, 0, 92], dtype="uint8")        
     # upper_ball = np.array([62, 76, 255], dtype="uint8")     # peter_putting_third
     # lower_ball = np.array([75, 0, 117], dtype="uint8")  
     # upper_ball = np.array([160, 114, 255], dtype="uint8")      # peter_putting_fourth
-    # lower_ball = np.array([50, 0, 183], dtype="uint8")  
-    # upper_ball = np.array([105, 82, 255], dtype="uint8")      # peter_putting_fourth60fps
+    lower_ball = np.array([50, 0, 183], dtype="uint8")  
+    upper_ball = np.array([105, 82, 255], dtype="uint8")      # peter_putting_fourth60fps
 
     # argparse setup
     ap = argparse.ArgumentParser()

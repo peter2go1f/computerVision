@@ -70,7 +70,7 @@ def find_ball(frame, frame_HSV, lower_ball, upper_ball):
     
 
 def track_ball():
-    cap = cv2.VideoCapture('videos/peter_putting_fifth_closeup_4k.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_second2.mp4')
 
     # Define the upper and lower HSV colour thresholds for the green (grass) colour.
     # lower_grass = np.array([50, 120, 70], dtype="uint8")  
@@ -79,22 +79,22 @@ def track_ball():
     # upper_grass = np.array([90, 255, 220], dtype="uint8")   # peter_putting_third
     # lower_grass = np.array([33, 54, 21], dtype="uint8")  
     # upper_grass = np.array([86, 255, 255], dtype="uint8")      # peter_putting_fourth
-    # lower_grass = np.array([30, 68, 75], dtype="uint8")  
-    # upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
-    lower_grass = np.array([25, 45, 0], dtype="uint8")  
-    upper_grass = np.array([90, 255, 255], dtype="uint8")      # peter_putting_fifth_closeup
+    lower_grass = np.array([30, 68, 75], dtype="uint8")  
+    upper_grass = np.array([91, 210, 220], dtype="uint8")      # peter_putting_fourth60fps
+    # lower_grass = np.array([25, 45, 0], dtype="uint8")  
+    # upper_grass = np.array([90, 255, 255], dtype="uint8")      # peter_putting_fifth_closeup
 
     # Define the upper and lower colour thresholds for the ball colour.
-    # lower_ball = np.array([70, 0, 95], dtype="uint8")  
-    # upper_ball = np.array([180, 80, 255], dtype="uint8")   # peter_putting_second
+    # lower_ball = np.array([50, 0, 95], dtype="uint8")  
+    # upper_ball = np.array([150, 80, 255], dtype="uint8")   # peter_putting_second
     # lower_ball = np.array([43, 0, 92], dtype="uint8")        
     # upper_ball = np.array([62, 76, 255], dtype="uint8")     # peter_putting_third
     # lower_ball = np.array([75, 0, 117], dtype="uint8")  
     # upper_ball = np.array([160, 114, 255], dtype="uint8")      # peter_putting_fourth
-    # lower_ball = np.array([50, 0, 130], dtype="uint8")  
-    # upper_ball = np.array([105, 100, 255], dtype="uint8")      # peter_putting_fourth60fps
-    lower_ball = np.array([0, 0, 150], dtype="uint8")  
-    upper_ball = np.array([120, 110, 255], dtype="uint8")      # peter_putting_fifth_closeup_4k
+    lower_ball = np.array([50, 0, 130], dtype="uint8")  
+    upper_ball = np.array([105, 100, 255], dtype="uint8")      # peter_putting_fourth60fps
+    # lower_ball = np.array([0, 0, 150], dtype="uint8")  
+    # upper_ball = np.array([120, 110, 255], dtype="uint8")      # peter_putting_fifth_closeup_4k
 
     # stats analysis
     ball_found = 0
@@ -141,7 +141,7 @@ def track_ball():
 
 
         # now find the ball using the masked_image
-        contours, center, radius = find_ball(frame, masked_image, lower_ball, upper_ball)    # using the find_ball function
+        contours, center, radius = find_ball(frame, frame_HSV, lower_ball, upper_ball)    # using the find_ball function
 
         
 

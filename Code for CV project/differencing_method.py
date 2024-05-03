@@ -8,7 +8,8 @@ def difference(cap):
     ret, img0 = cap.read()
     ret, img1 = cap.read()
 
-    while cv2.waitKey(100) < 0:
+    # while cv2.waitKey(100) < 0:
+    while cv2.waitKey(0):
         diff = cv2.subtract(img0, img1)  # calculate the difference of the two images
 
         # move the data in img0 to img1.
@@ -28,4 +29,5 @@ def difference(cap):
 
 if __name__ == "__main__":
     cap = cv2.VideoCapture('videos/peter_putting_fifth_60fps.mp4')
+    # cap = cv2.VideoCapture('videos/peter_putting_second2.mp4')
     difference(cap)
