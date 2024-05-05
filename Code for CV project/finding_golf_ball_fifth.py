@@ -79,7 +79,7 @@ def find_ball(frame_HSV, lower_ball, upper_ball, frame_num2, prevCenter):
     
 
 def track_ball():
-    cap = cv2.VideoCapture('videos/peter_putting_fifth_closeup_4k.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_fifth_60fps.mp4')
 
     # Circle tracking based on previous circle location
     prevCircle = None
@@ -104,6 +104,7 @@ def track_ball():
     frame_num2 = 0   # for use in find_ball()
     prevCenter = None
 
+    first_frame = True
     # while cv2.waitKey(100) < 0:   # the number determines how fast the video plays
     while cv2.waitKey(0):
         # grab the current frame
@@ -112,35 +113,44 @@ def track_ball():
             break
         frame_HSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)   # convert image from BGR to HSV
 
-        # Mask the frame using bitwise_and() operation with green grass so we only focus on the area with grass
-        green_mask = cv2.inRange(frame_HSV, lower_grass, upper_grass)
-        # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
-        kernel = np.ones((3,3), np.uint8)
-        closing_mask = cv2.morphologyEx(green_mask, cv2.MORPH_CLOSE, kernel, iterations=3)
-        # do some erosion after this to get rid of random white spots
-        # erosion_mask = cv2.erode(closing_mask, kernel, iterations=2)
-        opening_mask = cv2.morphologyEx(closing_mask, cv2.MORPH_OPEN, kernel, iterations=1)
-        # Find contours in the binary image
-        contours, _ = cv2.findContours(opening_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        contour = max(contours, key=len)
-        # Approximate the contour with a polygon
-        epsilon = 0.003 * cv2.arcLength(contour, True) # adjust the epsilon value as needed
-        approx = cv2.approxPolyDP(contour, epsilon, True)
-        # Draw the polygon (optional)
-        # cv2.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
-        # # Get corner points
-        # corners = np.squeeze(approx)
-        # # Draw circles at corner points (optional)
-        # for corner in corners:
-        #     cv2.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
-        # Create a black mask with the same dimensions as the image
-        black_mask = np.zeros(frame_HSV.shape[:2], dtype="uint8")   # this black_mask works
-        # Draw the polygon on the mask
-        cv2.fillPoly(black_mask, [approx], 255)
-        # Apply the mask to the original image
-        # masked_image = cv2.bitwise_and(frame_HSV, frame_HSV, mask=black_mask)
-        masked_image = cv2.bitwise_and(frame, frame, mask=black_mask)
-        
+        if first_frame:   # since the green and camera are stationary, only need green detection boudnary for first frame
+            first_frame = False
+            # Mask the frame using bitwise_and() operation with green grass so we only focus on the area with grass
+            green_mask = cv2.inRange(frame_HSV, lower_grass, upper_grass)
+            # Perfrom closing morphology (dilate then erosion) to fill gaps and holes in image
+            kernel = np.ones((3,3), np.uint8)
+            closing_mask = cv2.morphologyEx(green_mask, cv2.MORPH_CLOSE, kernel, iterations=3)
+            # do some erosion after this to get rid of random white spots
+            # erosion_mask = cv2.erode(closing_mask, kernel, iterations=2)
+            opening_mask = cv2.morphologyEx(closing_mask, cv2.MORPH_OPEN, kernel, iterations=1)
+            # Find contours in the binary image
+            contours, _ = cv2.findContours(opening_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            contour = max(contours, key=len)
+            # Approximate the contour with a polygon
+            epsilon = 0.003 * cv2.arcLength(contour, True) # adjust the epsilon value as needed
+            approx = cv2.approxPolyDP(contour, epsilon, True)
+            # Draw the polygon (optional)
+            # cv2.drawContours(frame, [approx], 0, (0, 255, 0), 2)  # Green color, thickness=2
+            # # Get corner points
+            # corners = np.squeeze(approx)
+            # # Draw circles at corner points (optional)
+            # for corner in corners:
+            #     cv2.circle(frame, tuple(corner), 5, (0, 0, 255), -1)  # Red color, filled circle
+            # Create a black mask with the same dimensions as the image
+            black_mask = np.zeros(frame_HSV.shape[:2], dtype="uint8")   # this black_mask works
+            # Draw the polygon on the mask
+            cv2.fillPoly(black_mask, [approx], 255)
+            # Apply the mask to the original image
+            masked_image = cv2.bitwise_and(frame_HSV, frame_HSV, mask=black_mask)
+            # masked_image = cv2.bitwise_and(frame, frame, mask=black_mask)
+        else:
+            # Create a black mask with the same dimensions as the image
+            black_mask = np.zeros(frame_HSV.shape[:2], dtype="uint8")   # this black_mask works
+            # Draw the polygon on the mask
+            cv2.fillPoly(black_mask, [approx], 255)
+            # Apply the mask to the original image
+            masked_image = cv2.bitwise_and(frame_HSV, frame_HSV, mask=black_mask)
+            # masked_image = cv2.bitwise_and(frame, frame, mask=black_mask)
 
 
         # now find the ball using the masked_image

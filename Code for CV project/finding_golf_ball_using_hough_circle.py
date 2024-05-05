@@ -89,11 +89,11 @@ def track_ball():
     img_original = cv2.imread('images/putting.jpg')
 
     # Define the upper and lower colour thresholds for the ball colour.
-    lower = np.array([30, 30, 90], dtype="uint8")
-    upper = np.array([150, 87, 200], dtype="uint8")
+    lower_ball = np.array([0, 0, 145], dtype="uint8")  
+    upper_ball = np.array([120, 95, 255], dtype="uint8")
 
     while cv2.waitKey(80) < 0:
-        center, radius = find_ball(img_original, lower, upper)
+        center, radius = find_ball(img_original, lower_ball, upper_ball)
         if center is not None:
             # Draw circle around the ball.
             cv2.circle(img_original, tuple(center), radius,(0,255,0), 2)
@@ -105,10 +105,8 @@ def track_ball():
 if __name__ == "__main__":
     # track_ball()
     
-
-    cap = cv2.VideoCapture('videos/peter_putting_second2.mp4')
+    cap = cv2.VideoCapture('videos/peter_putting_fifth_60fps.mp4')
     
-
     # mask = cv2.inRange(frame_HSV, lower, upper)
     while cv2.waitKey(0):    # cv2.waitKey(0) < 0:
         # grab the current frame
